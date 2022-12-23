@@ -4,11 +4,10 @@ def get_rates_from_api():
     result = requests.get('https://www.cbr-xml-daily.ru/latest.js').json().setdefault('rates')
     return result
     
- #Добавить RUB ключ со значением ???
-
 EXCHANGE_RATES = get_rates_from_api()
+# В выгруженном API словаре нет RUB:1. Нужно ли добавить его туда вручную через  d[key] = value
 
-# Приводим СЛОВАРЬ к строке (исправляем отображение списка валют), удаляем пробелы.
+# Приводим СЛОВАРЬ к строке для отображения списка валют без скобок, удаляем пробелы по краям.
 def rates_for_input():  
     dict_a = EXCHANGE_RATES
     result = ''
@@ -22,12 +21,23 @@ def main():
     exchange_rates = get_rates_from_api()
     rates_input = rates_for_input()
     base_currency = input(f'Введите валюту, которую хотите обменять =>\n{rates_input}\n')
-    base_currency = base_currency.upper()
+    base_currency = base_currency.upper() #приводим к UPPER если пользователь ввел не тот регистр
+
+    def isBaseCurrency_include_rates_input(base_currency):
+        check_key = base_currency in EXCHANGE_RATES.keys()
+        print(check_key)
+        if check_key:
+            return
+        else:
+            return f'Введена несуществующая валюта {base_currency}'
+    #Функция не возвращает результат в ветви else если введена не та валюта, программа переходит на строки ниже. С чем это может быть связано?
+
+    isBaseCurrency_include_rates_input(base_currency) #Вызываем функцию проверки действительна ли валюта.
     # Исправить отображение списка валют
     # Проверять, действительную ли валюту ввел пользователь и отрицательные значения
     # Обрезать лишние пробелы при вводе, проверять регистр ввода
     target_currency = input(f'Введите валюту, на которую хотите обменять =>\n{rates_input}\n')
-    target_currency = target_currency.upper()
+    target_currency = target_currency.upper() #приводим к UPPER если пользователь ввел не тот регистр
     # Исправить отображение списка валют
     # Проверять, действительную ли валюту ввел пользователь и отрицательные значения
     # Обрезать лишние пробелы при вводе, проверять регистр ввода
